@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>InstaVibe | Share Your Moments</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+
+<aside class="sidebar">
+
+    <h1 class="logo">Insta<span>Vibe</span></h1>
+
+    <nav>
+        <a href="#home" class="nav-item active">🏠 Home</a>
+        <a href="#search" class="nav-item">🔍 Search</a>
+        <a href="#explore" class="nav-item">🧭 Explore</a>
+        <a href="#reels" class="nav-item">🎬 Reels</a>
+        <a href="#messages" class="nav-item">💬 Messages</a>
+        <a href="#notifications" class="nav-item">❤️ Notifications</a>
+        <a href="#create" class="nav-item">➕ Create</a>
+        <a href="#profile" class="nav-item">👤 Profile</a>
+    </nav>
+
+    <div class="sidebar-bottom">
+        ⚙️ Settings
+    </div>
+
+</aside>
+
+
+<!-- MAIN CONTENT -->
+
+<main class="main-content" id="home">
+
+    <!-- MOBILE HEADER -->
+
+    <header class="mobile-header">
+        <h2>Insta<span>Vibe</span></h2>
+        <span>❤️ 💬</span>
+    </header>
+
+    <!-- STORIES -->
+
+    <section class="stories">
+
+        {% for user in users %}
+
+        <div class="story" data-username="{{ user.username }}">
+
+            <div class="story-ring">
+
+                <img
+                    src="{{ url_for('static', filename='images/' + user.avatar) }}"
+                    alt="{{ user.username }}"
+                    onerror="this.style.display='none';">
+
+                <span class="avatar-fallback">👤</span>
+
+            </div>
+
+            <p>{{ user.username }}</p>
+
+        </div>
+
+        {% endfor %}
+
+    </section>
+
+
+    <!-- FEED -->
+
+    <section class="feed">
+
+        {% for post in posts %}
+
+        <article class="post" id="post-{{ post.id }}">
+
+            <!-- POST HEADER -->
+
+            <div class="post-header">
+
+                <div class="post-user">
+
+                    <div class="small-avatar">
+                        <img
+                            src="{{ url_for('static', filename='images/' + post.avatar) }}"
+                            alt="{{ post.username }}"
+                            onerror="this.style.display='none';">
+                        <span>👤</span>
+                    </div>
+
+                    <div>
+                        <h4>{{ post.username }} <span class="verified">●</span></h4>
+                        <p>{{ post.location }}</p>
+                    </div>
+
+                </div>
+
+                <button class="more-btn" aria-label="More options">•••</button>
+
+            </div>
+
+
+            <!-- POST IMAGE -->
+
+            <div class="post-image">
+
+                <img
+                    src="{{ url_for('static', filename='images/' + post.image) }}"
+                    alt="{{ post.caption }}"
+                    onerror="this.style.display='none';">
+
+                <div class="image-placeholder">
+                    📸
+                    <span>Beautiful Moments</span>
+                </div>
+
+            </div>
+
+
+            <!-- POST ACTIONS -->
+
+            <div class="post-actions">
+
+                <div class="left-actions">
+
+                    <button
+                        class="like-btn"
+                        data-id="{{ post.id }}"
+                        aria-label="Like post">
+                        ♡
+                    </button>
+
+                    <button
+                        class="comment-toggle"
+                        data-id="{{ post.id }}"
+                        aria-label="Comment">
+                        💬
+                    </button>
+
+                    <button
+                        class="share-btn"
+                        data-id="{{ post.id }}"
+                        aria-label="Share post">
+                        ➤
+                    </button>
+
+                </div>
+
+                <button
+                    class="save-btn"
+                    data-id="{{ post.id }}"
+                    aria-label="Save post">
+                    ♧
+                </button>
+
+            </div>
+
+
+            <!-- POST DETAILS -->
+
+            <div class="post-details">
+
+                <h4 class="likes-count" id="likes-{{ post.id }}">
+                    {{ "{:,}".format(post.likes) }} likes
+                </h4>
+
+                <p class="caption">
+                    <strong>{{ post.username }}</strong>
+                    {{ post.caption }}
+                </p>
+
+                <p class="comments-count" id="comments-{{ post.id }}">
+                    View all {{ post.comments }} comments
+                </p>
+
+                <p class="post-time">{{ post.time }}</p>
+
+            </div>
+
+
+            <!-- ADD COMMENT -->
+
+            <div class="add-comment">
+
+                <input
+                    type="text"
+                    id="comment-input-{{ post.id }}"
+                    placeholder="Add a comment..."
+                    maxlength="500">
+
+                <button
+                    class="post-comment-btn"
+                    data-id="{{ post.id }}">
+                    Post
+                </button>
+
+            </div>
+
+        </article>
+
+        {% endfor %}
+
+    </section>
+
+</main>
+
+
+<!-- RIGHT SIDEBAR -->
+
+<aside class="right-sidebar">
+
+    <div class="my-profile">
+
+        <div class="profile-avatar">R</div>
+
+        <div>
+            <h4>roja_creations</h4>
+            <p>Roja | Digital Creator</p>
+        </div>
+
+        <a href="#profile">Switch</a>
+
+    </div>
+
+
+    <div class="suggestions-header">
+
+        <h4>Suggested for you</h4>
+
+        <span>See All</span>
+
+    </div>
+
+
+    {% for user in users %}
+
+    <div class="suggestion">
+
+        <div class="suggestion-avatar">👤</div>
+
+        <div class="suggestion-info">
+            <h4>{{ user.username }}</h4>
+            <p>{{ user.followers }} followers</p>
+        </div>
+
+        <button class="follow-btn">Follow</button>
+
+    </div>
+
+    {% endfor %}
+
+
+    <div class="right-footer">
+
+        <p>About · Help · Privacy · Terms</p>
+
+        <p>© 2026 INSTAVIBE</p>
+
+        <p>Educational Demo Project</p>
+
+    </div>
+
+</aside>
+
+
+<!-- NOTIFICATION -->
+
+<div id="toast" class="toast"></div>
+
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+
+</body>
+</html>
