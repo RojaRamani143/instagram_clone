@@ -1,0 +1,199 @@
+function showToast(message) {
+    const toast = document.getElementById("toast");
+
+    toast.textContent = message;
+    toast.classList.add("show");
+
+    clearTimeout(window.toastTimer);
+
+    window.toastTimer = setTimeout(() => {
+        toast.classList.remove("show");
+    }, 2500);
+}
+
+
+// LIKE POSTS
+
+document.querySelectorAll(".like-btn").forEach(button => {
+
+    button.addEventListener("click", async () => {
+
+        const postId = button.dataset.id;
+
+        if (button.classList.contains("liked")) {
+            showToast("You already liked this post ❤️");
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/like/${postId}`, {
+                method: "POST"
+            });
+
+            if (!response.ok) {
+                throw new Error("Unable to like post");
+            }
+
+            const data = await response.json();
+
+            button.classList.add("liked");
+            button.textContent = "♥";
+
+            document.getElementById(`likes-${postId}`).textContent =
+                data.likes.toLocaleString() + " likes";
+
+            showToast("Post liked ❤️");
+
+        } catch (error) {
+            showToast("Unable to like this post");
+        }
+
+    });
+
+});
+
+
+// ADD COMMENTS
+
+document.querySelectorAll(".post-comment-btn").forEach(button => {
+
+    button.addEventListener("click", async () => {
+
+        const postId = button.dataset.id;
+
+        const input = document.getElementById(
+            `comment-input-${postId}`
+        );
+
+        const comment = input.value.trim();
+
+        if (!comment) {
+            showToast("Please write a comment");
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/comment/${postId}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ comment })
+            });
+
+            if (!response.ok) {
+                throw new Error("Unable to post comment");
+            }
+
+            const data = await response.json();
+
+            document.getElementById(
+                `comments-${postId}`
+            ).textContent =
+                `View all ${data.comments} comments`;
+
+            input.value = "";
+
+            showToast("Comment added successfully 💬");
+
+        } catch (error) {
+            showToast("Unable to add comment");
+        }
+
+    });
+
+});
+
+
+// COMMENT BUTTON
+
+document.querySelectorAll(".comment-toggle").forEach(button => {
+
+    button.addEventListener("click", () => {
+
+        const postId = button.dataset.id;
+
+        document.getElementById(
+            `comment-input-${postId}`
+        ).focus();
+
+    });
+
+});
+
+
+// SAVE POSTS
+
+document.querySelectorAll(".save-btn").forEach(button => {
+
+    button.addEventListener("click", () => {
+
+        button.classList.toggle("saved");
+
+        if (button.classList.contains("saved")) {
+            button.textContent = "▣";
+            showToast("Post saved successfully");
+        } else {
+            button.textContent = "♧";
+            showToast("Post removed from saved");
+        }
+
+    });
+
+});
+
+
+// FOLLOW USERS
+
+document.querySelectorAll(".follow-btn").forEach(button => {
+
+    button.addEventListener("click", () => {
+
+        const following = button.classList.toggle("following");
+
+        button.textContent = following ? "Following" : "Follow";
+
+        showToast(
+            following ? "You are now following" : "Unfollowed"
+        );
+
+    });
+
+});
+
+
+// STORIES
+
+document.querySelectorAll(".story").forEach(story => {
+
+    story.addEventListener("click", () => {
+
+        showToast(
+            "Viewing " + story.dataset.username + "'s story ✨"
+        );
+
+    });
+
+});
+
+
+// SHARE POSTS
+
+document.querySelectorAll(".share-btn").forEach(button => {
+
+    button.addEventListener("click", async () => {
+
+        const postId = button.dataset.id;
+
+        const url = `${window.location.origin}/#post-${postId}`;
+
+        try {
+            await navigator.clipboard.writeText(url);
+            showToast("Post link copied!");
+        } catch (error) {
+            showToast("Unable to copy link");
+        }
+
+    });
+
+});
